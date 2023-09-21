@@ -13,6 +13,8 @@ namespace DemoAutoMigration.Models
         [Column("Job_Name")]
         [Required]
         public string jobName { get; set; }
+        [Column("Salary")]
+        public string salary { get; set; }
         [Column("Created_By")]
         public int createdBy { get; set; }
         [Column("Date_Created")]
