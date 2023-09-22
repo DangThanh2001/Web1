@@ -15,6 +15,19 @@ namespace DemoAutoMigration
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var allowFE = "_AllowFrontEndClient";
+
+            //add Cors
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: allowFE,
+                                  policy =>
+                                  {
+                                      policy.WithOrigins(builder.Configuration.GetValue<string>("FE_Port"))
+                                      .AllowAnyHeader()
+                                      .AllowAnyMethod();
+                                  });
+            });
 
             // Add services to the container.
 
@@ -40,6 +53,8 @@ namespace DemoAutoMigration
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors(allowFE);
 
             app.UseAuthorization();
 
