@@ -12,10 +12,11 @@ namespace DemoAutoMigration.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private IProductService service;
-        public ProductsController()
+        private IJobService service;
+
+        public ProductsController(IJobService service)
         {
-            service = new ProductService();
+            this.service = service;
         }
 
         [HttpGet]
@@ -24,7 +25,7 @@ namespace DemoAutoMigration.Controllers
             return new ResponseBody<List<Job>>()
             {
                 statusCode = HttpStatusCode.OK,
-                data = service.getAllProducts(),
+                data = service.GetAll(),
                 message = "Ok con de",
             };
         }
@@ -34,7 +35,7 @@ namespace DemoAutoMigration.Controllers
         {
             try
             {
-                service.addJob(job);
+                service.Add(job);
                 return new ResponseBody<string>()
                 {
                     statusCode = HttpStatusCode.OK,
