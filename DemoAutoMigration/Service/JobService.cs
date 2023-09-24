@@ -6,16 +6,16 @@ namespace DemoAutoMigration.Service
 {
     public class JobService : IJobService
     {
-        private readonly IJobRepository job;
+        private readonly IJobRepository repository;
 
         public JobService(IJobRepository repository)
         {
-            job = repository;
+            this.repository = repository;
         }
 
         public int Add(Job data)
         {
-            return job.createObject(data);
+            return repository.createObject(data);
         }
 
         public int DeleteById(int id)
@@ -30,7 +30,7 @@ namespace DemoAutoMigration.Service
 
         public List<Job> GetAll()
         {
-            return job.getAllObject();
+            return repository.getAllObject();
         }
 
         public Job GetById(int id)

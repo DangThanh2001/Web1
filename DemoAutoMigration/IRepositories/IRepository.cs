@@ -9,5 +9,6 @@ namespace DemoAutoMigration.IRepository
         public int createObject(T data);
         public int updateObject(T data);
         public int deleteObject(int id);
+        public int countObject();
     }
 }

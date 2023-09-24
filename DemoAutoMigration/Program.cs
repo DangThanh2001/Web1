@@ -1,4 +1,5 @@
 using AutoMapper;
+using DemoAutoMigration.IRepositories;
 using DemoAutoMigration.IRepository;
 using DemoAutoMigration.IService;
 using DemoAutoMigration.Models;
@@ -42,8 +43,7 @@ namespace DemoAutoMigration
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("JobConstr")));
 
             //add injection
-            builder.Services.AddTransient<IJobService, JobService>();
-            builder.Services.AddTransient<IJobRepository, JobRepository>();
+            configurationInterfce(builder);
 
             var app = builder.Build();
 
@@ -62,6 +62,15 @@ namespace DemoAutoMigration
             app.MapControllers();
 
             app.Run();
+        }
+
+        private static void configurationInterfce(WebApplicationBuilder builder)
+        {
+            builder.Services.AddTransient<IJobService, JobService>();
+            builder.Services.AddTransient<IJobRepository, JobRepository>();
+
+            builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddTransient<ICategoryService, CategoryService>();
         }
     }
 }

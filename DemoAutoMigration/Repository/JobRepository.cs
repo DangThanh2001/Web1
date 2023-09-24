@@ -13,6 +13,14 @@ namespace DemoAutoMigration.Repository
             this.context = context;
         }
 
+        public int countObject()
+        {
+            var rs = context.jobs
+                .Where(x => x.isDelete == false)
+                .Count();
+            return rs;
+        }
+
         public int createObject(Job data)
         {
             if(data == null) 
@@ -29,7 +37,9 @@ namespace DemoAutoMigration.Repository
 
         public List<Job> getAllObject()
         {
-            return context.jobs.ToList();
+            return context.jobs
+                .Where(x => x.isDelete == false)
+                .ToList();
         }
 
         public Job getById(int id)

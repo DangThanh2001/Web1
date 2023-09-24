@@ -10,7 +10,6 @@ namespace DemoAutoMigration.Models
 
         public DbSet<Job> jobs { get; set; }
         public DbSet<Category> categories { get; set; }
-
-        
+        public DbSet<User> users { get; set; }
     }
 }

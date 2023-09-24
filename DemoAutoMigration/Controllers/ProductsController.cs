@@ -1,4 +1,6 @@
-﻿using DemoAutoMigration.Common;
+﻿using AutoMapper;
+using DemoAutoMigration.Common;
+using DemoAutoMigration.DTO;
 using DemoAutoMigration.IService;
 using DemoAutoMigration.Models;
 using DemoAutoMigration.Service;
@@ -12,21 +14,23 @@ namespace DemoAutoMigration.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private IJobService service;
+        private readonly IJobService service;
+        private readonly IMapper mapper;
 
-        public ProductsController(IJobService service)
+        public ProductsController(IJobService service, IMapper mapper)
         {
+            this.mapper = mapper;
             this.service = service;
         }
 
         [HttpGet]
-        public ResponseBody<List<Job>> getAllJob()
+        public ResponseBody<List<JobDTO>> getAllJob()
         {
-            return new ResponseBody<List<Job>>()
+            return new ResponseBody<List<JobDTO>>()
             {
                 statusCode = HttpStatusCode.OK,
-                data = service.GetAll(),
-                message = "Ok con de",
+                data = mapper.Map<List<JobDTO>>(service.GetAll()),
+                message = GlobalStrings.SUCCESSFULLY,
             };
         }
 
@@ -40,7 +44,7 @@ namespace DemoAutoMigration.Controllers
                 {
                     statusCode = HttpStatusCode.OK,
                     data = null,
-                    message = "Ok",
+                    message = GlobalStrings.SUCCESSFULLY_SAVED,
                 };
             }
             catch (Exception ex)
