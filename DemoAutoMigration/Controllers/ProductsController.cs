@@ -4,12 +4,14 @@ using DemoAutoMigration.DTO;
 using DemoAutoMigration.IService;
 using DemoAutoMigration.Models;
 using DemoAutoMigration.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace DemoAutoMigration.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
