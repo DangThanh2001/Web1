@@ -39,7 +39,8 @@ namespace DemoAutoMigration.Controllers
                         new Claim("UserId", user.UserId.ToString()),
                         new Claim("DisplayName", user.DisplayName),
                         new Claim("UserName", user.UserName),
-                        new Claim("Email", user.Email)
+                        new Claim("Email", user.Email),
+                        new Claim(ClaimTypes.Role, user.Role),
                     };
 
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));

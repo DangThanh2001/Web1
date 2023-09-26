@@ -9,5 +9,8 @@
         public const string INTERNAL_SERVER_ERROR = "INTERNAL SERVER ERROR";
         //ultility
         public const string FORMAT_DATE_TIME = "dd/MM/yyyy";
+        //Role
+        public const string ADMIN_ROLE = "Admin";
+        public const string USER_ROLE = "User";
     }
 }

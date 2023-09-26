@@ -11,7 +11,6 @@ using System.Net;
 
 namespace DemoAutoMigration.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
@@ -25,6 +24,9 @@ namespace DemoAutoMigration.Controllers
             this.service = service;
         }
 
+        [Authorize(Roles =
+            $"{GlobalStrings.ADMIN_ROLE}," +
+            $"{GlobalStrings.USER_ROLE}")]
         [HttpGet]
         public ResponseBody<List<JobDTO>> getAllJob()
         {
