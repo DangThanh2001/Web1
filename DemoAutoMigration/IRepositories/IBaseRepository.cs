@@ -2,7 +2,7 @@
 
 namespace DemoAutoMigration.IRepository
 {
-    public interface IRepository<T>
+    public interface IBaseRepository<T>
     {
         public List<T> getAllObject();
         public T getById(int id);

@@ -2,17 +2,21 @@
 {
     public static class Validation
     {
-        public static bool checkString(string? input)
+        public static bool checkStringIsEmpty(params string[] inputs)
         {
             try
             {
-                input = input.Trim();
-                return string.IsNullOrEmpty(input) && string.IsNullOrWhiteSpace(input);
-            }
-            catch
-            {
+                foreach (var input in inputs)
+                {
+                    var o = input.Trim();
+                    if (string.IsNullOrEmpty(o) && string.IsNullOrWhiteSpace(o))
+                    {
+                        return true;
+                    }
+                }
                 return false;
             }
+            catch { return true; }
         }
     }
 }

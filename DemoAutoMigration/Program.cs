@@ -123,6 +123,8 @@ namespace DemoAutoMigration
         {
             builder.Services.AddTransient<IJobService, JobService>();
             builder.Services.AddTransient<IJobRepository, JobRepository>();
+            builder.Services.AddTransient<IBaseRepository<User>, UserRepository>();
+            builder.Services.AddTransient<ITokenService, TokenService>();
 
             builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
             builder.Services.AddTransient<ICategoryService, CategoryService>();

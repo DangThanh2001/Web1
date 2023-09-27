@@ -2,7 +2,7 @@
 
 namespace DemoAutoMigration.IRepository
 {
-    public interface IJobRepository : IRepository<Job>
+    public interface IJobRepository : IBaseRepository<Job>
     {
     }
 }

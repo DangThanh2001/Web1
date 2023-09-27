@@ -3,7 +3,7 @@ using DemoAutoMigration.Models;
 
 namespace DemoAutoMigration.IRepositories
 {
-    public interface ICategoryRepository : IRepository<Category>
+    public interface ICategoryRepository : IBaseRepository<Category>
     {
         
     }

@@ -1,4 +1,8 @@
-﻿using DemoAutoMigration.Models;
+﻿using DemoAutoMigration.IService;
+using DemoAutoMigration.Models;
+using DemoAutoMigration.ResponseObject;
+using DemoAutoMigration.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,15 +19,18 @@ namespace DemoAutoMigration.Controllers
     {
         public IConfiguration _configuration;
         private readonly JobContext _context;
+        private readonly ITokenService tokenService;
 
-        public TokenController(IConfiguration config, JobContext context)
+        public TokenController(IConfiguration config, JobContext context,
+            ITokenService tokenService)
         {
             _configuration = config;
             _context = context;
+            this.tokenService = tokenService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(User _userData)
+        public IActionResult Login(User _userData)
         {
             if (_userData != null && _userData.Email != null && _userData.Password != null)
             {
@@ -31,28 +38,7 @@ namespace DemoAutoMigration.Controllers
 
                 if (user != null)
                 {
-                    //create claims details based on the user information
-                    var claims = new[] {
-                        new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                        new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToString()),
-                        new Claim("UserId", user.UserId.ToString()),
-                        new Claim("DisplayName", user.DisplayName),
-                        new Claim("UserName", user.UserName),
-                        new Claim("Email", user.Email),
-                        new Claim(ClaimTypes.Role, user.Role),
-                    };
-
-                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-                    var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                    var token = new JwtSecurityToken(
-                        _configuration["Jwt:Issuer"],
-                        _configuration["Jwt:Audience"],
-                        claims,
-                        expires: DateTime.Now.AddMinutes(10),
-                        signingCredentials: signIn);
-
-                    return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+                    return Ok(tokenService.generateToken(user, _configuration));
                 }
                 else
                 {
@@ -65,9 +51,41 @@ namespace DemoAutoMigration.Controllers
             }
         }
 
-        private User GetUser(string email, string password)
+        private User? GetUser(string email, string password)
         {
             return _context.users.FirstOrDefault(u => u.Email == email && u.Password == password);
+        }
+
+        [HttpPost]
+        [Route("refresh")]
+        public IActionResult Refresh(TokenApiModel tokenApiModel)
+        {
+            if (tokenApiModel is null)
+                return BadRequest("Invalid client request");
+            string accessToken = tokenApiModel.AccessToken;
+            string refreshToken = tokenApiModel.RefreshToken;
+            var email = tokenService.GetEmailFromExpiredToken(accessToken); //this is mapped to the Name claim by default
+            var user = _context.users.SingleOrDefault(u => u.Email == email);
+            if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+                return BadRequest("Invalid client request");
+            var newAccessToken = tokenService.generateToken(user, _configuration);
+            return Ok(new ResponseToken()
+            {
+                token = newAccessToken.token,
+                refreshToken = newAccessToken.refreshToken,
+            });
+        }
+
+        [HttpPost, Authorize]
+        [Route("revoke")]
+        public IActionResult Revoke()
+        {
+            var username = User.Claims.First(x => x.Type == "Email").Value;
+            var user = _context.users.SingleOrDefault(u => u.Email == username);
+            if (user == null) return BadRequest();
+            user.RefreshToken = null;
+            _context.SaveChanges();
+            return NoContent();
         }
     }
 }
